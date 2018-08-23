@@ -11,6 +11,7 @@ from core.utils.disp import labelcolormap
 from core.utils.config import Config
 from core.utils.bbox import gen_bbox, label_to_prob, combine_prob, prob_to_label, IoU
 from core.utils.pickle_io import pickle_dump, pickle_load
+from transformLabelImage import convertColorMask2Ordinary
 import cv2
 
 patch_shape = (449, 449)
@@ -336,7 +337,7 @@ def main():
     category_all = pickle_load(os.path.join(dataset_dir, 'Class', resolution, args.testset + '.pkl'), encoding='latin')
     frame_cnt = 0
 
-    use_cache = (args.cache != '')
+    use_cache = False #(args.cache != '')
     video_cnt = -1
 
     for video_dir in video_list:
@@ -353,7 +354,10 @@ def main():
             continue
 
         frame_0 = cv2.imread(os.path.join(frame_dir, '%05d.jpg' % 0))
-        label_0 = cv2.imread(os.path.join(label_dir, '%05d.png' % 0), cv2.IMREAD_UNCHANGED)
+        #label_0 = cv2.imread(os.path.join(label_dir, '%05d.png' % 0), cv2.IMREAD_UNCHANGED)
+        label_0 = cv2.imread(os.path.join(label_dir, '%05d.png' % 0), cv2.IMREAD_GRAYSCALE)
+        label_0 = convertColorMask2Ordinary(label_0)  
+
 
         instance_num = label_0.max()
 
